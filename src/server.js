@@ -1,23 +1,10 @@
-import { extractQueryParams } from "../utils/extract-query-params.js";
-import { routes } from "./routes.js";
+import http from "http";
+import { routeHandler } from "./middlewares/routeHandler.js";
 
-export function routeHandler(request, response) {
-  const route = routes.find((route) => {
-    return route.method === request.method && route.path.test(request.url);
-  });
+const server = http.createServer((request, response) => {
+  routeHandler(request, response);
+});
 
-  if (route) {
-    const routeParams = request.url.match(route.path);
-
-    const { query, ...params } = routeParams.groups;
-
-    extractQueryParams(query);
-
-    request.params = params;
-    request.query = query ? extractQueryParams(query) : {};
-
-    return route.controller(request, response);
-  }
-
-  return response.writeHead(404).end("Rota não encontrada.");
-}
+server.listen(3333, () => {
+  console.log("Servidor rodando na porta 3333");
+});

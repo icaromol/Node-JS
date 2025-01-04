@@ -1,4 +1,4 @@
-import { parseRoutePath } from "../utils/parseRoutePath.js";
+import { parseRoutePath } from "./utils/parseRoutePath.js";
 
 export const routes = [
   {

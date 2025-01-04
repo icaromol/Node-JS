@@ -1,5 +1,5 @@
 import { extractQueryParams } from "../utils/extract-query-params.js";
-import { routes } from "./routes.js";
+import { routes } from "../routes.js";
 
 export function routeHandler(request, response) {
   const route = routes.find((route) => {
