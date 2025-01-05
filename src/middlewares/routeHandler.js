@@ -1,7 +1,11 @@
 import { extractQueryParams } from "../utils/extract-query-params.js";
 import { routes } from "../routes.js";
+import { Database } from "../database.js";
+import { jsonBodyHandler } from "../middlewares/jsonBodyHandler.js";
 
-export function routeHandler(request, response) {
+const database = new Database();
+
+export async function routeHandler(request, response) {
   const route = routes.find((route) => {
     return route.method === request.method && route.path.test(request.url);
   });
@@ -16,7 +20,12 @@ export function routeHandler(request, response) {
     request.params = params;
     request.query = query ? extractQueryParams(query) : {};
 
-    return route.controller(request, response);
+    // Processa o corpo da requisição (se necessário)
+    if (["POST", "PUT", "PATCH"].includes(request.method)) {
+      request.body = await jsonBodyHandler(request);
+    }
+
+    return route.controller({ request, response, database });
   }
 
   return response.writeHead(404).end("Rota não encontrada.");
